@@ -149,21 +149,21 @@ SQL
     ) | "${HISTORIAN_SQLITE3}" "${HISTORIAN_DB}";
 }
 
-cmd_complete() {
+cmd_suggest() {
     preflight_check;
     ensure_db_exists;
 
     local args=$@
-    _complete "$args"
+    _suggest "$args"
 }
 
-_complete() {
+_suggest() {
     local args=$@
     ( cat <<SQL
         SELECT command
         FROM history
         WHERE command LIKE '${args}%'
-        ORDER BY id DESC LIMIT 10;
+        ORDER BY id DESC LIMIT 1;
 SQL
     ) | "${HISTORIAN_SQLITE3}" "${HISTORIAN_DB}";
 }
@@ -185,8 +185,8 @@ main() {
     local cmd=$1
     shift
     case $cmd in
-    complete)
-        cmd_complete $@
+    suggest)
+        cmd_suggest $@
         ;;
     config)
         cmd_config $@
